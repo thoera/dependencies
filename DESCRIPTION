@@ -1,0 +1,14 @@
+Package: dependencies
+Type: Package
+Title: Retrieve and Plot the Dependencies of a Package
+Version: 0.1.0.9000
+Authors@R: person("Thomas", "Erard", email = "erard.thomas@gmail.com", role = c("aut", "cre"))
+Description: Retrieve and plot the dependencies of a package. Give the possibility to download the dependencies and to generate the code to install them.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Imports:
+  data.tree (>= 0.7.8),
+  igraph (>= 1.2.4.1),
+  miniCRAN (>= 0.2.11)
+RoxygenNote: 6.1.1
