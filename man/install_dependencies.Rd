@@ -4,12 +4,13 @@
 \alias{install_dependencies}
 \title{Generate the code to install the dependencies of a package}
 \usage{
-install_dependencies(dependencies, installed = NULL)
+install_dependencies(dependencies, installed = TRUE)
 }
 \arguments{
 \item{dependencies}{A dataframe. The dependencies of a package.}
 
-\item{installed}{A vector of already installed packages.}
+\item{installed}{A boolean or a character vector (default = TRUE). Filter out
+the packages that are already installed.}
 }
 \value{
 The code to install the dependencies of a package.

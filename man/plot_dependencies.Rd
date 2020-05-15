@@ -4,8 +4,12 @@
 \alias{plot_dependencies}
 \title{Plot a graph or a tree of the dependencies}
 \usage{
-plot_dependencies(dependencies, type = c("network", "tree"),
-  colors = NULL, ...)
+plot_dependencies(
+  dependencies,
+  type = c("network", "tree"),
+  colors = NULL,
+  ...
+)
 }
 \arguments{
 \item{dependencies}{A dataframe. The dependencies of a package.}

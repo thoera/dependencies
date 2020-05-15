@@ -4,21 +4,33 @@
 \alias{download_dependencies}
 \title{Download the dependencies of a package}
 \usage{
-download_dependencies(dependencies, directory, replace = FALSE)
+download_dependencies(
+  dependencies,
+  directory,
+  repository = getOption("repos"),
+  installed = TRUE,
+  replace = FALSE
+)
 }
 \arguments{
 \item{dependencies}{A dataframe. The dependencies of a package.}
 
 \item{directory}{A string (default = "network"). The directory where
-downloaded packages are to be stored. Creates the directory if it does not
-exist.}
+the downloaded packages are to be stored. Creates the directory if it does
+not exist.}
 
-\item{replace}{A boolean (default = FALSE). Control if existing packages in
-the directory should be replaced.}
+\item{repository}{A string (default = getOption("repos")).
+The base URL of the repository to use.}
+
+\item{installed}{A boolean or a character vector (default = TRUE). Filter out
+the packages that are already installed.}
+
+\item{replace}{A boolean (default = FALSE). Control if the existing packages
+in the directory should be replaced.}
 }
 \value{
-A two-column matrix of names and destination file names of those
-  packages successfully downloaded.
+A two-column matrix of names and destination file names for
+  the packages successfully downloaded.
 }
 \description{
 Download the dependencies of a package.

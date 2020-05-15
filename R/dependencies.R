@@ -137,12 +137,16 @@ get_nodes <- function(dependencies) {
 #'
 #' @param dependencies A dataframe. The dependencies of a package.
 #' @param directory A string (default = "network"). The directory where
-#'   downloaded packages are to be stored. Creates the directory if it does not
-#'   exist.
-#' @param replace A boolean (default = FALSE). Control if existing packages in
-#'   the directory should be replaced.
-#' @return A two-column matrix of names and destination file names of those
-#'   packages successfully downloaded.
+#'   the downloaded packages are to be stored. Creates the directory if it does
+#'   not exist.
+#' @param repository A string (default = getOption("repos")).
+#'   The base URL of the repository to use.
+#' @param installed A boolean or a character vector (default = TRUE). Filter out
+#'   the packages that are already installed.
+#' @param replace A boolean (default = FALSE). Control if the existing packages
+#'   in the directory should be replaced.
+#' @return A two-column matrix of names and destination file names for
+#'   the packages successfully downloaded.
 #' @seealso \code{\link{get_dependencies}}, \code{\link{plot_dependencies}},
 #'   \code{\link{download_dependencies}}, \code{\link{install_dependencies}}
 #' @examples
@@ -151,7 +155,13 @@ get_nodes <- function(dependencies) {
 #' download_dependencies(dependencies = dependencies, directory = "packages")
 #' }
 #' @export
-download_dependencies <- function(dependencies, directory, replace = FALSE) {
+download_dependencies <- function(
+  dependencies,
+  directory,
+  repository = getOption("repos"),
+  installed = TRUE,
+  replace = FALSE
+) {
   if (!inherits(dependencies, "data.frame")) {
     stop("'dependencies' must be a data frame")
   }
@@ -166,13 +176,21 @@ download_dependencies <- function(dependencies, directory, replace = FALSE) {
 
   nodes <- get_nodes(dependencies = dependencies)
 
+  if (isTRUE(installed)) {
+    installed_packages <- utils::installed.packages()[, "Package"]
+    nodes <- nodes[!nodes %in% installed_packages]
+  } else if (is.character(installed)) {
+    nodes <- nodes[!nodes %in% installed]
+  }
+
   if (isFALSE(replace)) {
-    existing_packages <- list.files("packages", pattern = ".tar.gz$")
+    existing_packages <- list.files(directory, pattern = ".tar.gz$")
     nodes <- nodes[!sapply(nodes, function(x) any(grepl(x, existing_packages)))]
   }
 
-  utils::download.packages(pkgs = nodes, destdir = directory,
-                           repos = "https://cran.r-project.org")
+  utils::download.packages(
+    pkgs = nodes, destdir = directory, repos = repository
+  )
 }
 
 #' Get the current version on CRAN for a vector of packages
@@ -203,7 +221,8 @@ get_version <- function(packages) {
 #' Generate the code to install the dependencies of a package.
 #'
 #' @param dependencies A dataframe. The dependencies of a package.
-#' @param installed A vector of already installed packages.
+#' @param installed A boolean or a character vector (default = TRUE). Filter out
+#'   the packages that are already installed.
 #' @return The code to install the dependencies of a package.
 #' @seealso \code{\link{get_dependencies}}, \code{\link{plot_dependencies}},
 #'   \code{\link{download_dependencies}}, \code{\link{install_dependencies}}
@@ -213,7 +232,7 @@ get_version <- function(packages) {
 #' install_dependencies(dependencies = dependencies)
 #' }
 #' @export
-install_dependencies <- function(dependencies, installed = NULL) {
+install_dependencies <- function(dependencies, installed = TRUE) {
   if (!inherits(dependencies, "data.frame")) {
     stop("'dependencies' must be a data frame")
   }
@@ -224,7 +243,10 @@ install_dependencies <- function(dependencies, installed = NULL) {
 
   nodes <- get_nodes(dependencies = dependencies)
 
-  if (!is.null(installed)) {
+  if (isTRUE(installed)) {
+    installed_packages <- utils::installed.packages()[, "Package"]
+    nodes <- nodes[!nodes %in% installed_packages]
+  } else if (is.character(installed)) {
     nodes <- nodes[!nodes %in% installed]
   }
 
